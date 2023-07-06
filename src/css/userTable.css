@@ -1,0 +1,113 @@
+/* userTable.css */
+.user-table {
+  width: 100%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+  height: 275px;
+  overflow: hidden;
+}
+
+.page-con-user-table {
+  display: flex;
+  padding: 40px;
+  height: 80vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.user-table-table {
+  width: 100%;
+  min-width: 670px;
+  border-collapse: collapse;
+  height: 215px;
+}
+
+.user-table-table::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+.user-table-table::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.user-table-table::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 25px;
+}
+
+.user-table-table::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.user-table-row {
+  cursor: pointer;
+}
+
+.user-table-row:hover {
+  background-color: #f5f5f5;
+}
+
+.full-name-th {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+
+.full-name-span {
+  margin-left: 10px;
+  display: flex;
+}
+
+td,
+th {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  width: 33%;
+  text-align: left;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.user-table-address-cell {
+  max-width: 50px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.user-table-button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.user-table-button:hover {
+  background-color: #0056b3;
+}
+
+.user-table-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.user-table-button-prev {
+  float: left;
+}
+
+.user-table-button-next {
+  float: right;
+}

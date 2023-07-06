@@ -1,0 +1,121 @@
+/* userPosts.css */
+.user-posts {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.page-con-user-posts {
+  display: flex;
+  padding: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-posts-btn-con {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-posts-top-con {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-posts-filter {
+  width: 30%;
+  display: flex;
+  align-self: center;
+}
+
+.user-posts-post {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 15px;
+  height: 120px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.user-posts-wrapper {
+  height: 700px;
+}
+
+.user-post-delete-btn {
+  position: absolute !important;
+  top: 5px;
+  right: 5px;
+}
+
+.user-posts-no-posts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 20px;
+  color: #888;
+}
+
+.user-posts-button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.user-posts-button:hover {
+  background-color: #0056b3;
+}
+
+.user-posts-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.user-posts-button-prev {
+  float: left;
+}
+
+.user-posts-button-next {
+  float: right;
+}
+
+.user-posts-back-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  margin-left: 20px !important;
+}
+
+.user-posts-back-button:hover {
+  background-color: #0056b3;
+}
+
+@media only screen and (max-width: 750px) {
+  .user-posts-top-con {
+    flex-direction: column;
+  }
+
+  .user-posts-back-button {
+    margin-left: 0px !important;
+    margin-top: 20px !important;
+  }
+
+  .user-posts-filter {
+    width: 70%;
+  }
+}
