@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import userService from "../services/UserService";
 import { Post } from "./Interface";
@@ -16,43 +16,71 @@ const UserPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState("");
 
   const { userId } = useParams<{ userId: string }>();
 
-  useEffect(() => {
-    async function fetchPosts(): Promise<void> {
-      setLoading(true);
-      if (userId) {
-        const parsedUserId = parseInt(userId);
-        const res = await userService.getUserPosts(parsedUserId);
-        if (Array.isArray(res)) {
-          setPosts(res);
-          setLoading(false);
+  const fetchPosts = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    if (userId) {
+      const parsedUserId = parseInt(userId);
+      const res = await userService.getUserPosts(parsedUserId, currentPage, PAGE_SIZE);
+      setLoading(false);
+      if (res && Array.isArray(res.posts)) {
+        setPosts(res.posts);
+        setTotalPages(Math.ceil(res.total / PAGE_SIZE));
+        if (res.total <= 4) {
+          setCurrentPage(1);
         }
       }
     }
+  }, [userId, currentPage]);
 
+  useEffect(() => {
     fetchPosts();
-  }, [userId]);
+  }, [fetchPosts]);
 
   const handleDeletePost = async (postId: number) => {
     await userService.deletePost(postId);
-    setPosts(posts.filter((post) => post.id !== postId));
+    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+
+    if (filteredPosts.length === 1) {
+      fetchPosts();
+    }
+
+    if (filteredPosts.length === 1 && currentPage > 1) {
+      const newTotalPages = Math.max(totalPages - 1, 1);
+      setCurrentPage((prevPage) => Math.min(prevPage, newTotalPages));
+      setTotalPages(newTotalPages);
+    }
   };
+
+  const filteredPosts = posts.filter((post) => post.title.includes(filter));
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => setFilter(e.target.value);
 
-  const handleNextPage = () => setCurrentPage(currentPage + 1);
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => {
+      const nextPage = prevPage + 1;
+      if (nextPage > totalPages) {
+        return totalPages;
+      } else {
+        return nextPage;
+      }
+    });
+  };
 
-  const handlePrevPage = () => setCurrentPage(currentPage - 1);
-
-  const filteredPosts = useMemo(() => posts.filter((post) => post.title.toLowerCase().includes(filter.toLowerCase())), [posts, filter]);
-
-  const postsToShow = useMemo(
-    () => filteredPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
-    [filteredPosts, currentPage]
-  );
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => {
+      const newPage = prevPage - 1;
+      if (newPage < 1) {
+        return 1;
+      } else {
+        return newPage;
+      }
+    });
+  };
 
   return (
     <div className="page-con-user-posts">
@@ -67,8 +95,8 @@ const UserPosts: React.FC = () => {
             </Button>
           </div>
           <div className="user-posts-wrapper">
-            {!postsToShow.length && <h2 className="user-posts-no-posts">No post found</h2>}
-            {postsToShow.map((post) => (
+            {!filteredPosts.length && <h2 className="user-posts-no-posts">There were no posts found</h2>}
+            {filteredPosts.map((post) => (
               <article key={post.id} className="user-posts-post">
                 <IconButton onClick={() => handleDeletePost(post.id)} className="user-post-delete-btn">
                   <DeleteIcon />
@@ -82,11 +110,7 @@ const UserPosts: React.FC = () => {
             <IconButton className="user-posts-button user-posts-button-prev" onClick={handlePrevPage} disabled={currentPage === 1}>
               <KeyboardArrowLeftIcon />
             </IconButton>
-            <IconButton
-              className="user-posts-button user-posts-button-next"
-              onClick={handleNextPage}
-              disabled={filteredPosts.length / PAGE_SIZE <= currentPage}
-            >
+            <IconButton className="user-posts-button user-posts-button-next" onClick={handleNextPage} disabled={currentPage >= totalPages}>
               <KeyboardArrowRightIcon />
             </IconButton>
           </div>

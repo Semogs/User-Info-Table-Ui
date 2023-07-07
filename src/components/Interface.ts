@@ -28,4 +28,9 @@ export interface Post {
   body: string;
 }
 
+export interface UserPostsResponse {
+  posts: Post[];
+  total: number;
+}
+
 export type SortOrder = "asc" | "desc";

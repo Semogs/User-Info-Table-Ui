@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/userTable.css";
 import { orderBy } from "lodash";
@@ -20,18 +20,18 @@ const UserTable: React.FC = () => {
 
   const usersToShow = orderBy(users, ["name"], [sortOrder]).slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  useEffect(() => {
-    async function fetchUsers(): Promise<void> {
-      setLoading(true);
-      const res = await userService.getUsers();
-      if (Array.isArray(res)) {
-        setUsers(res);
-        setLoading(false);
-      }
+  const fetchUsers = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    const res = await userService.getUsers();
+    if (Array.isArray(res)) {
+      setUsers(res);
+      setLoading(false);
     }
-
-    fetchUsers();
   }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleUserRowClick = (userId: number) => {
     navigate(`/user/${userId}/posts`);
@@ -39,8 +39,6 @@ const UserTable: React.FC = () => {
 
   const handleSort = () => {
     const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
-    const sortedUsers = orderBy(users, ["name"], [newSortOrder]);
-    setUsers(sortedUsers);
     setSortOrder(newSortOrder);
   };
 
@@ -67,17 +65,20 @@ const UserTable: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersToShow.map((user) => (
-                  <tr key={user.id} className="user-table-row" onClick={() => handleUserRowClick(user.id)}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <Tooltip title={`${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}`}>
-                      <td>
-                        <div className="user-table-address-cell">{`${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}`}</div>
-                      </td>
-                    </Tooltip>
-                  </tr>
-                ))}
+                {usersToShow.map((user) => {
+                  const userAddress = `${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}`;
+                  return (
+                    <tr key={user.id} className="user-table-row" onClick={() => handleUserRowClick(user.id)}>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <Tooltip title={userAddress}>
+                        <td>
+                          <div className="user-table-address-cell">{userAddress}</div>
+                        </td>
+                      </Tooltip>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
