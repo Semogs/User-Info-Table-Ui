@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../config";
-import { UserPostsResponse } from "../components/Interface";
+import { UserPostsResponse } from "../Interface";
 import Swal from "sweetalert2";
 
 const userService = {

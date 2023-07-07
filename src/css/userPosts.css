@@ -24,13 +24,24 @@
 
 .user-posts-top-con {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
+.user-posts-filter-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.user-posts-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .user-posts-filter {
-  width: 30%;
+  width: 50%;
   display: flex;
   align-self: center;
 }
@@ -38,8 +49,9 @@
 .user-posts-post {
   position: relative;
   margin-bottom: 20px;
+  overflow-y: auto;
   padding: 15px;
-  height: 120px;
+  height: 130px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   background-color: #fff;
@@ -47,6 +59,7 @@
 
 .user-posts-wrapper {
   height: 700px;
+  margin-bottom: 20px;
 }
 
 .user-post-delete-btn {
@@ -74,6 +87,10 @@
   cursor: pointer;
 }
 
+.user-posts-button-icon {
+  font-size: 40px !important;
+}
+
 .user-posts-button:hover {
   background-color: #0056b3;
 }
@@ -98,7 +115,6 @@
   background-color: #007bff;
   color: white;
   border-radius: 5px;
-  margin-left: 20px !important;
 }
 
 .user-posts-back-button:hover {
@@ -107,15 +123,15 @@
 
 @media only screen and (max-width: 750px) {
   .user-posts-top-con {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   .user-posts-back-button {
     margin-left: 0px !important;
-    margin-top: 20px !important;
+    margin-bottom: 20px !important;
   }
 
   .user-posts-filter {
-    width: 70%;
+    width: 100%;
   }
 }

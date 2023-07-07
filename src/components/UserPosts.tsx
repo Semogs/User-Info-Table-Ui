@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import userService from "../services/UserService";
-import { Post } from "./Interface";
+import { Post } from "../Interface";
 import { PAGE_SIZE } from "../config";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -74,10 +74,20 @@ const UserPosts: React.FC = () => {
       ) : (
         <div className="user-posts">
           <div className="user-posts-top-con">
-            <TextField className="user-posts-filter" placeholder="Filter posts" value={filter} onChange={handleFilterChange} />
-            <Button className="user-posts-back-button" component={Link} to="/" variant="contained">
-              Back to Users
-            </Button>
+            <div className="user-posts-filter-container">
+              <TextField
+                className="user-posts-filter"
+                variant="standard"
+                placeholder="Type to filter"
+                value={filter}
+                onChange={handleFilterChange}
+              />
+            </div>
+            <div className="user-posts-button-container">
+              <Button className="user-posts-back-button" component={Link} to="/" variant="contained">
+                Back to Users
+              </Button>
+            </div>
           </div>
           <div className="user-posts-wrapper">
             {!filteredPosts.length && <h2 className="user-posts-no-posts">There were no posts found</h2>}
@@ -97,14 +107,14 @@ const UserPosts: React.FC = () => {
               onClick={() => handlePrevPage(setCurrentPage, currentPage)}
               disabled={currentPage === 1}
             >
-              <KeyboardArrowLeftIcon />
+              <KeyboardArrowLeftIcon className="user-posts-button-icon" />
             </IconButton>
             <IconButton
               className="user-posts-button user-posts-button-next"
               onClick={() => handleNextPage(setCurrentPage, currentPage)}
               disabled={currentPage >= totalPages}
             >
-              <KeyboardArrowRightIcon />
+              <KeyboardArrowRightIcon className="user-posts-button-icon" />
             </IconButton>
           </div>
         </div>

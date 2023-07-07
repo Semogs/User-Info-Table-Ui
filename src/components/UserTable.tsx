@@ -4,7 +4,7 @@ import "../css/userTable.css";
 import { orderBy } from "lodash";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { User, SortOrder } from "./Interface";
+import { User, SortOrder } from "../Interface";
 import userService from "../services/UserService";
 import { PAGE_SIZE } from "../config";
 import ContentLoader from "./ContentLoader";
@@ -84,7 +84,6 @@ const UserTable: React.FC = () => {
               </tbody>
             </table>
           </div>
-
           <button
             className="user-table-button user-table-button-prev"
             onClick={() => handlePrevPage(setCurrentPage, currentPage)}
