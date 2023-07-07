@@ -28,8 +28,8 @@ const UserTable: React.FC = () => {
     const res = await userService.getUsers();
     if (Array.isArray(res)) {
       setUsers(res);
-      setLoading(false);
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
