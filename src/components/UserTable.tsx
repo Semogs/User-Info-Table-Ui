@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/userTable.css";
 import { orderBy } from "lodash";
@@ -9,6 +9,7 @@ import userService from "../services/UserService";
 import { PAGE_SIZE } from "../config";
 import ContentLoader from "./ContentLoader";
 import { Tooltip } from "@mui/material";
+import { handleNextPage, handlePrevPage } from "../utils";
 
 const UserTable: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -17,6 +18,8 @@ const UserTable: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   const navigate = useNavigate();
+
+  const isInitialFetch = useRef(true);
 
   const usersToShow = orderBy(users, ["name"], [sortOrder]).slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
@@ -30,7 +33,10 @@ const UserTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchUsers();
+    if (isInitialFetch.current) {
+      isInitialFetch.current = false;
+      fetchUsers();
+    }
   }, [fetchUsers]);
 
   const handleUserRowClick = (userId: number) => {
@@ -41,10 +47,6 @@ const UserTable: React.FC = () => {
     const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
     setSortOrder(newSortOrder);
   };
-
-  const handleNextPage = () => setCurrentPage(currentPage + 1);
-
-  const handlePrevPage = () => setCurrentPage(currentPage - 1);
 
   return (
     <div className="page-con-user-table">
@@ -82,12 +84,17 @@ const UserTable: React.FC = () => {
               </tbody>
             </table>
           </div>
-          <button className="user-table-button user-table-button-prev" onClick={handlePrevPage} disabled={currentPage === 1}>
+
+          <button
+            className="user-table-button user-table-button-prev"
+            onClick={() => handlePrevPage(setCurrentPage, currentPage)}
+            disabled={currentPage === 1}
+          >
             Previous
           </button>
           <button
             className="user-table-button user-table-button-next"
-            onClick={handleNextPage}
+            onClick={() => handleNextPage(setCurrentPage, currentPage)}
             disabled={users.length / PAGE_SIZE <= currentPage}
           >
             Next

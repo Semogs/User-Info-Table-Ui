@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import userService from "../services/UserService";
 import { Post } from "./Interface";
@@ -11,6 +11,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import "../css/userPosts.css";
 import ContentLoader from "./ContentLoader";
+import { handleNextPage, handlePrevPage } from "../utils";
 
 const UserPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -21,6 +22,8 @@ const UserPosts: React.FC = () => {
 
   const { userId } = useParams<{ userId: string }>();
 
+  const isInitialFetch = useRef(true);
+
   const fetchPosts = useCallback(async (): Promise<void> => {
     setLoading(true);
     if (userId) {
@@ -28,6 +31,7 @@ const UserPosts: React.FC = () => {
       const res = await userService.getUserPosts(parsedUserId, currentPage, PAGE_SIZE);
       setLoading(false);
       if (res && Array.isArray(res.posts)) {
+        isInitialFetch.current = true;
         setPosts(res.posts);
         setTotalPages(Math.ceil(res.total / PAGE_SIZE));
         if (res.total <= 4) {
@@ -38,10 +42,13 @@ const UserPosts: React.FC = () => {
   }, [userId, currentPage]);
 
   useEffect(() => {
-    fetchPosts();
+    if (isInitialFetch.current) {
+      isInitialFetch.current = false;
+      fetchPosts();
+    }
   }, [fetchPosts]);
 
-  const handleDeletePost = async (postId: number) => {
+  const handleDeletePost = async (postId: number): Promise<void> => {
     await userService.deletePost(postId);
     setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
 
@@ -59,28 +66,6 @@ const UserPosts: React.FC = () => {
   const filteredPosts = posts.filter((post) => post.title.includes(filter));
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => setFilter(e.target.value);
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => {
-      const nextPage = prevPage + 1;
-      if (nextPage > totalPages) {
-        return totalPages;
-      } else {
-        return nextPage;
-      }
-    });
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => {
-      const newPage = prevPage - 1;
-      if (newPage < 1) {
-        return 1;
-      } else {
-        return newPage;
-      }
-    });
-  };
 
   return (
     <div className="page-con-user-posts">
@@ -107,10 +92,18 @@ const UserPosts: React.FC = () => {
             ))}
           </div>
           <div className="user-posts-btn-con">
-            <IconButton className="user-posts-button user-posts-button-prev" onClick={handlePrevPage} disabled={currentPage === 1}>
+            <IconButton
+              className="user-posts-button user-posts-button-prev"
+              onClick={() => handlePrevPage(setCurrentPage, currentPage)}
+              disabled={currentPage === 1}
+            >
               <KeyboardArrowLeftIcon />
             </IconButton>
-            <IconButton className="user-posts-button user-posts-button-next" onClick={handleNextPage} disabled={currentPage >= totalPages}>
+            <IconButton
+              className="user-posts-button user-posts-button-next"
+              onClick={() => handleNextPage(setCurrentPage, currentPage)}
+              disabled={currentPage >= totalPages}
+            >
               <KeyboardArrowRightIcon />
             </IconButton>
           </div>
